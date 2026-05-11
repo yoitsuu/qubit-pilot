@@ -241,7 +241,7 @@ def evaluate():
     )
 
     print(f"Loading checkpoint: {CONFIG['checkpoint_path']}")
-    agent.load(CONFIG["checkpoint_path"])
+    agent.load(CONFIG['final_checkpoint'])
 
     # --- Run evaluation episodes ---
     print(f"Running {CONFIG['n_eval_episodes']} greedy evaluation episodes...")
@@ -257,9 +257,8 @@ def evaluate():
     # --- Re-run training to get reward/loss history for plotting ---
     # Note: this re-trains from scratch to collect metrics.
     # In a real project you'd save metrics during training.
-    print("\nCollecting training metrics (re-running training)...")
-    from train import train as run_training
-    episode_rewards, episode_losses, _ = run_training()
+    print("\nLoading training metrics...")
+    episode_rewards, episode_losses, _ = reconstruct_training_metrics()
 
     # --- Build figure ---
     os.makedirs(CONFIG["output_dir"], exist_ok=True)

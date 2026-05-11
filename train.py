@@ -174,6 +174,6 @@ if __name__ == "__main__":
 
         print(f"Demo {i + 1}: gates={gates}, reward = {total_reward:.3f}")
 
-        #auto eval for plots
-        from evaluate import evaluate
-        evaluate()
+    #auto eval for plots
+    from evaluate import evaluate
+    evaluate()
