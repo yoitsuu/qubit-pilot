@@ -11,7 +11,6 @@ I added depolarizing noise after each gate.
 This implementation is largely based on: 
 Niu et al. (2019) "Universal quantum control through deep reinforcement learning"
 """
-
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
@@ -236,10 +235,10 @@ class QuantumEnvironment:
             print(f"Statevector: {np.round(sv, 3)}")
             print(f"Fidelity: {fidelity:.4f}")
         
-        if __name__ == "__main__":
-            env = QuantumEnvironment(target_name="|+>", noise_prob=0.01)
-            obs = env.reset()
-            print("Initial obs:", obs)
-            obs, reward, done = env.step(1)  # apply H gate
-            env.render()
-            print(f"Reward: {reward:.4f}, Done: {done}")
+if __name__ == "__main__":
+    env = QuantumEnvironment(target_name="|+>", noise_prob=0.01)
+    obs = env.reset()
+    print("Initial obs:", obs)
+    obs, reward, done = env.step(1)  # apply H gate
+    env.render()
+    print(f"Reward: {reward:.4f}, Done: {done}")
