@@ -108,7 +108,7 @@ class ReplayBuffer:
 
         return (
             torch.tensor(np.array(states), dtype=torch.float32),
-            torch.tensor(np.array(actions), dtype=torch.float32),
+            torch.tensor(np.array(actions), dtype=torch.long), #64-bit integer needed by gather
             torch.tensor(np.array(rewards), dtype=torch.float32),
             torch.tensor(np.array(next_states), dtype=torch.float32),
             torch.tensor(np.array(dones), dtype=torch.float32),
