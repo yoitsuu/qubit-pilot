@@ -46,7 +46,7 @@ class QNetwork(nn.Module):
     """
 
     def __init__(self, obs_size: int, n_actions: int, hidden_size: int = 64):
-        super().__init()
+        super().__init__()
 
         self.network = nn.Sequential(
             nn.Linear(obs_size, hidden_size),
