@@ -144,10 +144,15 @@ class QuantumEnvironment:
         ))
 
         #Reward
-        #Big reward for solving
-        #raw fidelity per step otherwise, to encourage progress
+        #Sparse reward: only meaningful for solving
+        # small penalty per step
         solved = fidelity >= self.fidelity_threshold
-        reward = fidelity + (1.0 if solved else 0.0)
+
+        if solved:
+            reward = 1.0 + (self.max_steps - self.current_step) * 0.1
+        else:
+            reward = -0.01 #small penalty, no fidelity reward
+        
 
         done = solved or (self.current_step >= self.max_steps)
 

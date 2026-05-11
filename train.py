@@ -46,7 +46,7 @@ CONFIG = {
     "print_every": 100, #print summary every N episodes
     "save_every": 500, #save model checkpoint every N episodes
     "checkpoint_path": "checkpoints/dqn_{episode}.pt",
-    "solved_reward": 1.8, #average reward considered "solved"
+    "solved_reward": 1.95, #average reward considered "solved"
     "solved_window": 100, #episodes to average reward over
 }
 
@@ -187,5 +187,7 @@ if __name__ == "__main__":
             state, reward, done = env.step(action)
             gates.append(GATE_SET[action])
             total_reward += reward
+
+        env.render() #render so we can see
 
         print(f"Demo {i + 1}: gates={gates}, reward = {total_reward:.3f}")
