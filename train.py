@@ -22,33 +22,7 @@ from environment import QuantumEnvironment, GATE_SET
 from agent import DQNAgent
 
 #Hyperparameters
-CONFIG = {
-    #Environment
-    "target_name": "|+>", #which state to prepare
-    "noise_prob": 0.01, #depolarizing noise per gate
-    "max_steps": 10, #max gates per episode
-
-    #Training
-    "n_episodes": 2000, #total episodes to train for
-    "learn_every": 1, #learn every N steps (1 = every step)
-
-    #Agent
-    "lr": 1e-3, #learning rate
-    "gamma": 0.99, #discount factor
-    "epsilon_start": 1.0, #initial exploration rate
-    "epsilon_end": 0.05, #minimum exploration rate
-    "epsilon_decay": 0.995, #decay per episode
-    "batch_size": 64, #experiences per learning step
-    "target_update_freq": 50, #steps between target network syncs
-    "buffer_capacity": 10_000, #max replay buffer size
-
-    #Logging and saving
-    "print_every": 100, #print summary every N episodes
-    "save_every": 500, #save model checkpoint every N episodes
-    "checkpoint_path": "checkpoints/dqn_{episode}.pt",
-    "solved_reward": 1.95, #average reward considered "solved"
-    "solved_window": 100, #episodes to average reward over
-}
+from config import CONFIG
 
 #Training Loop
 def train():
@@ -160,6 +134,14 @@ def train():
     print(f"\nTraining complete. Best avg reward: {best_avg_reward:.3f}")
     agent.save("checkpoints/dqn_final.pt")
 
+    #Save training metrics for evaluate.py
+    import json
+    with open("checkpoints/metrics.json", "w") as f:
+        json.dump({
+            "rewards": episode_rewards,
+            "losses": episodes_losses,
+        }, f)
+
     return episode_rewards, episodes_losses, agent
 
 
@@ -191,3 +173,7 @@ if __name__ == "__main__":
         env.render() #render so we can see
 
         print(f"Demo {i + 1}: gates={gates}, reward = {total_reward:.3f}")
+
+        #auto eval for plots
+        from evaluate import evaluate
+        evaluate()
