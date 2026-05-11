@@ -93,57 +93,54 @@ def reconstruct_training_metrics():
 # Plot 1: Training curve
 # ---------------------------------------------------------------------------
 
-def plot_training_curve(ax, rewards: list, window: int = 100):
+def plot_training_curve(ax, rewards: list, losses: list, window: int = 100):
     """
-    Plot raw episode rewards and a smoothed rolling average.
-    The rolling average reveals the learning trend beneath noisy episodes.
+    Plot reward curve with rolling average, and loss on a second y-axis.
+    Reward increasing while loss decreases confirms the Q-function is improving.
     """
     episodes = np.arange(1, len(rewards) + 1)
     raw = np.array(rewards)
 
-    # Rolling average
+    # Rolling average of rewards
     rolling = np.convolve(raw, np.ones(window) / window, mode="valid")
     rolling_episodes = episodes[window - 1:]
 
+    # Reward on left y-axis
     ax.plot(episodes, raw, alpha=0.3, color="#4C9BE8", linewidth=0.8, label="Episode reward")
     ax.plot(rolling_episodes, rolling, color="#1A5FA8", linewidth=2.0,
             label=f"Rolling avg (n={window})")
-
-    ax.axhline(y=1.9, color="#E85C4C", linestyle="--", linewidth=1.2, label="Optimal reward (1.9)")
-
+    ax.axhline(y=1.9, color="#E85C4C", linestyle="--", linewidth=1.2, label="Optimal (1.9)")
     ax.set_xlabel("Episode")
-    ax.set_ylabel("Total Reward")
-    ax.set_title("Training Curve")
-    ax.legend(fontsize=8)
+    ax.set_ylabel("Total Reward", color="#1A5FA8")
+    ax.tick_params(axis="y", labelcolor="#1A5FA8")
+    ax.set_title("Training Curve — Reward & Loss")
+    ax.legend(fontsize=7, loc="upper left")
     ax.grid(alpha=0.3)
 
+    # Loss on right y-axis
+    ax2 = ax.twinx()
+    loss_rolling = np.convolve(losses, np.ones(window) / window, mode="valid")
+    loss_episodes = episodes[window - 1:]
+    ax2.plot(loss_episodes, loss_rolling, color="#E8A44C", linewidth=1.5,
+             alpha=0.8, label=f"Loss (rolling avg)")
+    ax2.set_ylabel("Loss", color="#E8A44C")
+    ax2.tick_params(axis="y", labelcolor="#E8A44C")
+    ax2.legend(fontsize=7, loc="upper right")
 
-# ---------------------------------------------------------------------------
-# Plot 2: Epsilon decay
-# ---------------------------------------------------------------------------
-
-def plot_epsilon_decay(ax, n_episodes: int, epsilon_start: float = 1.0,
-                       epsilon_end: float = 0.05, epsilon_decay: float = 0.995):
+#Plot 2: gate sequence length over training
+def plot_episode_lengths(ax, all_gates: list):
     """
-    Reconstruct and plot the epsilon decay curve.
-    Shows how exploration rate decreased over training.
+    Plot distribution of episode lengths from eval episodes.
+    A well-trained agent should solve in 1 gate almost always.
     """
-    epsilons = []
-    eps = epsilon_start
-    for _ in range(n_episodes):
-        epsilons.append(eps)
-        eps = max(epsilon_end, eps * epsilon_decay)
-
-    ax.plot(np.arange(1, n_episodes + 1), epsilons, color="#4CAF82", linewidth=2.0)
-    ax.axhline(y=epsilon_end, color="#E85C4C", linestyle="--", linewidth=1.2,
-               label=f"Floor ({epsilon_end})")
-
-    ax.set_xlabel("Episode")
-    ax.set_ylabel("Epsilon")
-    ax.set_title("Exploration Rate (Epsilon) Decay")
-    ax.legend(fontsize=8)
-    ax.grid(alpha=0.3)
-    ax.set_ylim(0, 1.05)
+    lengths = [len(g) for g in all_gates]
+    unique, counts = np.unique(lengths, return_counts=True)
+    ax.bar(unique, counts, color="#4C9BE8", edgecolor="white")
+    ax.set_xlabel("Gates Used to Solve")
+    ax.set_ylabel("Number of Episodes")
+    ax.set_title("Episode Length Distribution (Eval)")
+    ax.set_xticks(unique)
+    ax.grid(alpha=0.3, axis="y")
 
 
 # ---------------------------------------------------------------------------
@@ -258,7 +255,7 @@ def evaluate():
     # Note: this re-trains from scratch to collect metrics.
     # In a real project you'd save metrics during training.
     print("\nLoading training metrics...")
-    episode_rewards, episode_losses, _ = reconstruct_training_metrics()
+    episode_rewards, episode_losses = reconstruct_training_metrics()
 
     # --- Build figure ---
     os.makedirs(CONFIG["output_dir"], exist_ok=True)
@@ -278,8 +275,8 @@ def evaluate():
     ax3 = fig.add_subplot(gs[1, 0])
     ax4 = fig.add_subplot(gs[1, 1])
 
-    plot_training_curve(ax1, episode_rewards, window=CONFIG["rolling_window"])
-    plot_epsilon_decay(ax2, n_episodes=len(episode_rewards))
+    plot_training_curve(ax1, episode_rewards, episode_losses, window=CONFIG["rolling_window"])
+    plot_episode_lengths(ax2, all_gates)
     plot_gate_heatmap(ax3, all_gates, max_steps=CONFIG["max_steps"])
     plot_fidelity_distribution(ax4, fidelities)
 

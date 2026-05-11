@@ -26,8 +26,6 @@ CONFIG = {
     "save_every":         500,
     "checkpoint_path":    "checkpoints/dqn_{episode}.pt",
     "final_checkpoint": "checkpoints/dqn_final.pt",
-    "solved_reward":      1.5,
-    "solved_window":      300,
     "rolling_window":     100,
 
     # Evaluation

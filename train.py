@@ -119,17 +119,6 @@ def train():
         if episode % CONFIG["save_every"] == 0:
             path = CONFIG['checkpoint_path'].format(episode=episode)
             agent.save(path)
-        
-        #Solved check
-        #Consider the task solved if the agent consistently gets
-        #high reward over the last "solved_window" episodes
-        #for example, solved_reward of 1.8 means fidelity of
-        # ~0.8 + solve bonus ~1.0 consistently.
-        # We interpret this as the agent has learned a reliable policy.
-        if avg_reward >= CONFIG["solved_reward"] and episode >= CONFIG["solved_window"]:
-            print(f"\nSolved at episode {episode}! Avg reward: {avg_reward:.3f}")
-            agent.save('checkpoints/dqn_solved.pt')
-            break
     
     print(f"\nTraining complete. Best avg reward: {best_avg_reward:.3f}")
     agent.save("checkpoints/dqn_final.pt")
