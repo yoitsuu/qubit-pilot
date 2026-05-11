@@ -62,7 +62,7 @@ def train():
     #Metrics tracking
     episode_rewards = []
     episodes_losses = []
-    recent_rewards = deque(maxlen=CONFIG['solved_window'])
+    recent_rewards = deque(maxlen=100)
     best_avg_reward = float('-inf')
 
     #Episode loop
@@ -109,7 +109,7 @@ def train():
             avg_loss = np.mean(episodes_losses[-CONFIG["print_every"]:]) #takes the last "print_every" episodes then averages them
             print(
                 f"Episode {episode:>5} | "
-                f"Avg Reward (last {CONFIG['solved_window']}: {avg_reward:.3f}) | "
+                f"Avg Reward (last 100: {avg_reward:.3f}) | "
                 f"Avg Loss: {avg_loss:.4f} | "
                 f"Epsilon: {agent.epsilon:.3f} | "
                 f"Buffer: {len(agent.buffer)}"

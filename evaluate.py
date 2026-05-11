@@ -109,7 +109,6 @@ def plot_training_curve(ax, rewards: list, losses: list, window: int = 100):
     ax.plot(episodes, raw, alpha=0.3, color="#4C9BE8", linewidth=0.8, label="Episode reward")
     ax.plot(rolling_episodes, rolling, color="#1A5FA8", linewidth=2.0,
             label=f"Rolling avg (n={window})")
-    ax.axhline(y=1.9, color="#E85C4C", linestyle="--", linewidth=1.2, label="Optimal (1.9)")
     ax.set_xlabel("Episode")
     ax.set_ylabel("Total Reward", color="#1A5FA8")
     ax.tick_params(axis="y", labelcolor="#1A5FA8")
@@ -128,19 +127,30 @@ def plot_training_curve(ax, rewards: list, losses: list, window: int = 100):
     ax2.legend(fontsize=7, loc="upper right")
 
 #Plot 2: gate sequence length over training
-def plot_episode_lengths(ax, all_gates: list):
+def plot_episode_lengths(ax, all_gates: list, max_steps: int):
     """
     Plot distribution of episode lengths from eval episodes.
     A well-trained agent should solve in 1 gate almost always.
     """
     lengths = [len(g) for g in all_gates]
     unique, counts = np.unique(lengths, return_counts=True)
+    ax.set_xlim(0.5, max_steps + 0.5)
+    ax.set_xticks(range(1, max_steps + 1))
     ax.bar(unique, counts, color="#4C9BE8", edgecolor="white")
     ax.set_xlabel("Gates Used to Solve")
     ax.set_ylabel("Number of Episodes")
     ax.set_title("Episode Length Distribution (Eval)")
     ax.set_xticks(unique)
     ax.grid(alpha=0.3, axis="y")
+    for rect in ax.patches:
+        height = rect.get_height()
+        if height > 0:
+            ax.text(
+                rect.get_x() + rect.get_width() / 2,
+                height + 0.5,
+                str(int(height)),
+                ha="center", va="bottom", fontsize=8
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -276,7 +286,7 @@ def evaluate():
     ax4 = fig.add_subplot(gs[1, 1])
 
     plot_training_curve(ax1, episode_rewards, episode_losses, window=CONFIG["rolling_window"])
-    plot_episode_lengths(ax2, all_gates)
+    plot_episode_lengths(ax2, all_gates, max_steps=CONFIG['max_steps'])
     plot_gate_heatmap(ax3, all_gates, max_steps=CONFIG["max_steps"])
     plot_fidelity_distribution(ax4, fidelities)
 
