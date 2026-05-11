@@ -236,6 +236,7 @@ class QuantumEnvironment:
         print(f"Fidelity: {fidelity:.4f}")
         
 if __name__ == "__main__":
+    #Quick test case for manual runs and debugging this file
     env = QuantumEnvironment(target_name="|+>", noise_prob=0.01)
     obs = env.reset()
     print("Initial obs:", obs)
