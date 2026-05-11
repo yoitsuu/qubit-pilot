@@ -228,11 +228,11 @@ class QuantumEnvironment:
         #Print current circuit and statevector for debugging
         print(f"\nStep {self.current_step} | Target: {self.target_name}")
         print(self.current_circuit.draw(output="text"))
-        sv = self._get_statevector
+        sv = self._get_statevector()
         fidelity = float(state_fidelity(
-            Statevector(sv), Statevector(self.target_state)
+            sv, Statevector(self.target_state)
         ))
-        print(f"Statevector: {np.round(sv, 3)}")
+        print(f"Statevector: {np.round(sv.data, 3)}")
         print(f"Fidelity: {fidelity:.4f}")
         
 if __name__ == "__main__":
