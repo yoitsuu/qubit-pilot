@@ -3,7 +3,7 @@
 
 CONFIG = {
     # Environment
-    "target_name":        "|+>",
+    "target_name":        "|i>",
     "noise_prob":         0.01,
     "max_steps":          10,
 
