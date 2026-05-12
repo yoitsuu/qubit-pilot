@@ -1,6 +1,6 @@
 # qubit-pilot
 
-A deep reinforcement learning agent that learns to prepare target quantum states by discovering optimal gate sequences — trained on a noisy qubit simulator built with Qiskit and PyTorch.
+A deep reinforcement learning agent that learns to prepare target quantum states by discovering optimal gate sequences, trained on a noisy qubit simulator built with Qiskit and PyTorch.
 
 Inspired by [Niu et al. (2019) "Universal quantum control through deep reinforcement learning"](https://arxiv.org/pdf/1803.01857).
 
@@ -8,7 +8,7 @@ Inspired by [Niu et al. (2019) "Universal quantum control through deep reinforce
 
 ## Overview
 
-Quantum state preparation is a fundamental challenge in near-term quantum computing. Given a qubit initialized to |0⟩, the task is to find a sequence of gates that transforms it into a target state with high fidelity — under realistic hardware noise.
+Quantum state preparation is a fundamental challenge in near-term quantum computing. Given a qubit initialized to |0⟩, the task is to find a sequence of gates that transforms it into a target state with high fidelity under realistic hardware noise.
 
 Rather than using gradient-based optimization, this project trains a Deep Q-Network (DQN) to discover gate sequences autonomously through trial and error. The agent learns entirely from a sparse reward signal: it receives no feedback until it successfully prepares the target state, forcing it to explore the gate space efficiently.
 
@@ -67,7 +67,7 @@ A standard DQN implementation in PyTorch with two key stabilization techniques:
 - **Replay buffer:** Stores past experiences and samples random batches for training, breaking temporal correlations that would otherwise destabilize learning
 - **Target network:** A periodically-synced frozen copy of the online network, used to compute stable Q-value targets and prevent the moving-target problem
 
-Action selection uses epsilon-greedy exploration — starting fully random and decaying toward greedy exploitation as the Q-function becomes accurate.
+Action selection uses epsilon-greedy exploration starting fully random and decaying toward greedy exploitation as the Q-function becomes accurate.
 
 ### Training (`train.py`)
 
