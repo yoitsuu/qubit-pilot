@@ -81,7 +81,7 @@ class QuantumEnvironment:
             self,
             target_name: str = "|+>",
             max_steps: int = 10,
-            noise_prob: float = 0.01,
+            gate_noise: dict = None,
             fidelity_threshold: float = 0.99,
     ):
         assert target_name in TARGET_STATES, (
@@ -91,12 +91,12 @@ class QuantumEnvironment:
         self.target_name = target_name
         self.target_state = TARGET_STATES[target_name]
         self.max_steps = max_steps
-        self.noise_prob = noise_prob
+        self.gate_noise = gate_noise or {g: 0.001 for g in GATE_SET}
         self.fidelity_threshold = fidelity_threshold
         
         #Noise sim
         self.simulator = AerSimulator(method="statevector")
-        self.noise_model = self._build_noise_model(noise_prob)
+        self.noise_model = self._build_noise_model()
 
         #Episode vars
         self.current_circuit = None
@@ -145,13 +145,16 @@ class QuantumEnvironment:
 
         #Reward
         #Sparse reward: only meaningful for solving
-        # small penalty per step
+        # small penalty per step based on noise of chosen gate
+        gate_name = GATE_SET[action]
+        gate_error = self.gate_noise[gate_name]
+
         solved = fidelity >= self.fidelity_threshold
 
         if solved:
             reward = 1.0 + (self.max_steps - self.current_step) * 0.1
         else:
-            reward = -0.01 #small penalty, no fidelity reward
+            reward = -1 * gate_error * 10 #small penalty based on gate, times 10 for scaling
         
 
         done = solved or (self.current_step >= self.max_steps)
@@ -200,7 +203,7 @@ class QuantumEnvironment:
             sv[1].real, sv[1].imag,
         ], dtype=np.float32)
     
-    def _build_noise_model(self, prob: float) -> NoiseModel:
+    def _build_noise_model(self) -> NoiseModel:
         """
         Build the depolarizing noise model.
 
@@ -213,8 +216,10 @@ class QuantumEnvironment:
         I expect the agent will be encouraged to find shorter, more efficient gate sequences rather than brute force.
         """
         noise_model = NoiseModel()
-        error = depolarizing_error(prob, 1) #1-qubit depolarizing error
-        noise_model.add_all_qubit_quantum_error(error, GATE_SET)
+        for gate, prob in self.gate_noise.items():
+            if prob > 0:
+                error = depolarizing_error(prob, 1) # 1-qubit depolarizing error
+                noise_model.add_quantum_error(error, gate, [0])
         return noise_model
 
     #Utility Section

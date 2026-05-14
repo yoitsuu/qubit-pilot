@@ -238,7 +238,7 @@ def evaluate():
     # --- Load environment and agent ---
     env = QuantumEnvironment(
         target_name=CONFIG["target_name"],
-        noise_prob=CONFIG["noise_prob"],
+        gate_noise=CONFIG["gate_noise"],
         max_steps=CONFIG["max_steps"],
     )
 
@@ -271,9 +271,11 @@ def evaluate():
     os.makedirs(CONFIG["output_dir"], exist_ok=True)
 
     fig = plt.figure(figsize=(14, 10))
+    noise_min = min(CONFIG['gate_noise'].values())
+    noise_max = max(CONFIG['gate_noise'].values())
     fig.suptitle(
         f"qubit-pilot: DQN Quantum Gate Optimization\n"
-        f"Target: {CONFIG['target_name']} | Noise: {CONFIG['noise_prob']} | "
+        f"Target: {CONFIG['target_name']} | Noise: {noise_min}-{noise_max} | "
         f"Mean Fidelity: {np.mean(fidelities):.3f}",
         fontsize=13, fontweight="bold"
     )

@@ -18,17 +18,17 @@ The environment applies depolarizing noise after each gate, modeling the imperfe
 
 ## Results
 
-Training on the |i⟩ target state (`[1/√2, i/√2]`), a Y-basis state requiring 
-both amplitude and phase manipulation, the agent discovers the optimal 2-gate 
+Training on the |i⟩ target state (`[1/√2, i/√2]`), a Y-basis state requiring
+both amplitude and phase manipulation, the agent discovers the optimal 2-gate
 solution: Hadamard followed by S gate.
 ```
-Episode  500 | Avg Reward: 1.324 | Epsilon: 0.368
-Episode 1000 | Avg Reward: 1.647 | Epsilon: 0.135
-Episode 1500 | Avg Reward: 1.695 | Epsilon: 0.050
-Episode 2000 | Avg Reward: 1.751 | Epsilon: 0.050
+Episode  500 | Avg Reward: 1.380 | Epsilon: 0.368
+Episode 1000 | Avg Reward: 1.692 | Epsilon: 0.135
+Episode 1500 | Avg Reward: 1.662 | Epsilon: 0.050
+Episode 2000 | Avg Reward: 1.692 | Epsilon: 0.050
 
-Mean fidelity (200 eval episodes): 0.995
-Fidelity >= 0.99: 99.5% of episodes
+Mean fidelity (200 eval episodes): 1.000
+Fidelity >= 0.99: 100.0% of episodes
 Mean episode length: 2.00 gates
 
 ```
@@ -38,9 +38,8 @@ sequence. The agent was not told the answer or the gate ordering. Notably, the
 agent had to learn that ordering matters: S → H produces a different state 
 entirely.
 
-The small gap between the achieved reward (1.768) and the theoretical maximum 
-(1.800) reflects the 1% depolarizing noise accumulating across two gates. I found this
-to be a physically meaningful result consistent with NISQ hardware constraints.
+Gate noise is modeled per-gate based on superconducting transmon hardware characteristics. See
+config.py for citations and noise settings.
 
 To train on a different target, change `target_name` in `config.py` and rerun. 
 If introducing a new target state (`TARGET_STATES` in `environment.py`), just add it as a key-value pair in that object.

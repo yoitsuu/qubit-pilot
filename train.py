@@ -30,7 +30,7 @@ def train():
     print("qubit-pilot: DQN Quantum Gate Optimization")
     print("=" * 60)
     print(f"Target state: {CONFIG['target_name']}")
-    print(f"Noise prob: {CONFIG['noise_prob']}")
+    print(f"Gate noise: {CONFIG['gate_noise']}")
     print(f"Max steps: {CONFIG['max_steps']}")
     print(f"Episodes: {CONFIG['n_episodes']}")
     print()
@@ -39,7 +39,7 @@ def train():
     env = QuantumEnvironment(
         target_name=CONFIG['target_name'],
         max_steps=CONFIG["max_steps"],
-        noise_prob=CONFIG['noise_prob'],
+        gate_noise=CONFIG['gate_noise'],
     )
 
     agent = DQNAgent(
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     print("\n--- Trained Agent Demo ---")
     env = QuantumEnvironment(
         target_name=CONFIG["target_name"],
-        noise_prob=CONFIG['noise_prob'],
+        gate_noise=CONFIG['gate_noise'],
     )
 
     #Run 5 demo episodes with greedy policy (no exploration)
