@@ -54,8 +54,8 @@ The quantum environment follows a standard RL interface: `reset()` and `step(act
 
 - **State:** The current qubit statevector, represented as 4 floats — real and imaginary parts of the two complex amplitudes
 - **Actions:** 6 discrete gates — X, H, T, S, Z, Identity
-- **Reward:** Sparse — a solve bonus plus remaining-step savings when fidelity exceeds 0.99, a small per-step penalty otherwise
-- **Noise:** Depolarizing error applied after every gate via Qiskit Aer's noise model
+- **Reward:** Sparse — a solve bonus plus remaining-step savings when fidelity exceeds 0.99, otherwise a per-step penalty scaled by the gate's noise rate
+- **Noise:** Per-gate depolarizing error via Qiskit Aer's noise model. Per-gate error rates sourced from superconducting transmon hardware literature, sources in `config.py`
 
 The statevector is extracted directly from the simulator (no measurement collapse) so the agent observes the full quantum state at each step.
 
